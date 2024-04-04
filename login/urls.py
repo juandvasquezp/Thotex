@@ -16,8 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
+from .viewsets import *
+from . import views
 
-urlpatterns = [
-    path('register/', RegistrationView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login')
-]
+router = routers.SimpleRouter()
+router.register('personas', PersonaViewSet)
+
+#urlpatterns = [
+#    path('register/', RegistrationView.as_view(), name='register'),
+#    path('login/', LoginView.as_view(), name='login')
+#]
+
+urlpatterns = router.urls
