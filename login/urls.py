@@ -19,13 +19,14 @@ from django.urls import path
 from rest_framework import routers
 from .viewsets import *
 from . import views
+from .views import LoginView, RegisterView
 
-router = routers.SimpleRouter()
-router.register('personas', PersonaViewSet)
+# router = routers.SimpleRouter()
+# router.register('personas', PersonaViewSet)
 
-#urlpatterns = [
-#    path('register/', RegistrationView.as_view(), name='register'),
-#    path('login/', LoginView.as_view(), name='login')
-#]
+urlpatterns = [
+   path('register', RegisterView.as_view(), name='register'),
+   path('login', LoginView.as_view(), name='login'),
+]
 
-urlpatterns = router.urls
+# urlpatterns = router.urls
