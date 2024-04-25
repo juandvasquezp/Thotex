@@ -14,7 +14,7 @@ class User(AbstractUser):
     
 def crear_persona(sender, instance, created, **kwargs):
     if created:
-        user_persona = Persona(User=instance)
+        user_persona = Persona(Usuario=instance)
         user_persona.save()
 
 post_save.connect(crear_persona, sender=User)
@@ -23,7 +23,7 @@ class Persona(models.Model):
     
     Usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     Per_id = models.AutoField(primary_key=True)
-    Mun_id = models.ForeignKey('Municipio', on_delete=models.CASCADE)
+    Mun_id = models.ForeignKey('Municipio', on_delete=models.CASCADE, null=True)
     Per_tipoId = models.CharField(max_length=30)
     Per_identificacion = models.IntegerField()
     Per_nombre = models.CharField(max_length=40)

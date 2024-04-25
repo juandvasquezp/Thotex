@@ -67,6 +67,12 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
 ROOT_URLCONF = 'thotex.urls'
 
 TEMPLATES = [
