@@ -1,102 +1,80 @@
-#from django.shortcuts import render
-#from django.contrib.auth.models import User
-#from django.http import JsonResponse
-#from django.views.decorators.csrf import csrf_exempt
-#from django.utils.decorators import method_decorator
-#from django.contrib.auth import authenticate, login
-#from django.views import View
-#import json
-
-
-#@method_decorator(csrf_exempt, name='dispatch')
-#class RegistrationView(View):
-#    def post(self, request):
-#        # Parse the JSON body of the request
-#        data = json.loads(request.body)
-#        name = data.get('name')
-#        last_name = data.get('lastName')
-#        email = data.get('email')
-#        phone_number = data.get('phoneNumber')
-#        password = data.get('password')
-#        confirm_password = data.get('confirmPassword')
-#        checked_terms = data.get('checkedTerms')
-
-#        # Validar los datos
-#        if not all([name, last_name, email, phone_number, password, confirm_password, checked_terms]):
-#            return JsonResponse({'status': 'error', 'message': 'Todos los campos son requeridos'})
-
-#        if password != confirm_password:
-#            return JsonResponse({'status': 'error', 'message': ''})
-
-#        if User.objects.filter(username=email).exists():
-#            return JsonResponse({'status': 'error', 'message': ''})
-
-#        # Crear el usuario
-#        user = User.objects.create_user(username=email, email=email, password=password, first_name=name, last_name=last_name)
-#        user.save()
-
-#        #Confirmar la operación exitosa
-#        return JsonResponse({'status': 'success', 'message': 'Usuario registrado con exito'})
-
-#@method_decorator(csrf_exempt, name='dispatch')
-#class LoginView(View):
-#    def post(self, request):
-#        # Parse the JSON body of the request
-#        data = json.loads(request.body)
-#        email = data.get('email')
-#        password = data.get('password')
-
-#        # Authenticate the user
-#        user = authenticate(request, username=email, password=password)
-
-#        if user is not None:
-#            # Login the user
-#            login(request, user)
-#            return JsonResponse({'status': 'success', 'message': 'Usuario loggeado con exito'})
-#        else:
-#            # Return an error message
-#            return JsonResponse({'status': 'error', 'message': 'Credenciales invalidas'})
-
-#def home(request):
-#    return render(request, 'index.html')
-
-# En tu archivo views.py en la app 'login'
-
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from .Serializer import UserSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+import jwt, datetime
 
-def register(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        last_name = request.POST.get('last_name')
-        phone_number = request.POST.get('phone_number')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        # Aquí puedes realizar la validación de los datos y crear un nuevo usuario
-        try:
-            user = User.objects.create_user(username=email, email=email, password=password, first_name=name, last_name=last_name)
-            return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)})
-    else:
-        return JsonResponse({'success': False, 'message': 'Metodo no permitido'})
+User = get_user_model()
 
-def user_login(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+class RegisterView(APIView):
+    
+    def post(self, request):
+                
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+class LoginView(APIView):
+    
+    def post(self, request):
         
-        # Aquí autenticamos al usuario
-        user = authenticate(username=email, password=password)
-        if user:
+        correo = request.data['correo']
+        contrasena = request.data['contrasena']
+
+        user = authenticate(username=correo, password=contrasena)
+        if user is not None:
             login(request, user)
-            return JsonResponse({'success': True, 'message': 'Login exitoso'})
+            payload = {
+                'id': user.id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                'iat': datetime.datetime.utcnow()
+            }
+            token = jwt.encode(payload, 'secret', algorithm='HS256')
+
+            response = Response()
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'jwt': token
+            }
+            
+            return response
         else:
-            return JsonResponse({'success': False, 'message': 'Credenciales invalidas'})
-    else:
-        return JsonResponse({'success': False, 'message': 'Metodo no permitido'})
+            return JsonResponse({'mensaje': 'Inicio de sesion fallido'})
 
+class UserView(APIView):
 
+    def get(self, request):
+
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({'mensaje': 'No hay token'})
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'mensaje': 'Token expirado'})
+
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data)
+    
+        
+class LogoutView(APIView):
+    
+        def post(self, request):
+            response = Response()
+            response.delete_cookie('jwt')
+            response.data = {
+                'message': 'Sesion cerrada'
+            }
+            return response
+                        
+                        
+        
 

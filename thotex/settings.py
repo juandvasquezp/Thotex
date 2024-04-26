@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",  # URL de la aplicaci�n Vue.js
+    "http://localhost:8080",  # URL de la aplicaci�n Vue.js
     "http://127.0.0.1:8080"
 ]
 
@@ -66,6 +66,14 @@ CORS_ALLOW_METHODS = (
     "POST",
     "PUT",
 )
+
+CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 ROOT_URLCONF = 'thotex.urls'
 
@@ -92,10 +100,35 @@ WSGI_APPLICATION = 'thotex.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    
+    # Pruebas con SQLite
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
+    # Conexión a la base de datos MySQL - Desarrollo local
+    
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'thotexdb',
+        'USER': 'root',
+        'PASSWORD': 'Thusenterprise?mysql',
+        'HOST': 'localhost',  # or the hostname where your MySQL server is running
+        'PORT': '3306',      # or the port on which your MySQL server is listening
     }
+
+    # Conexión a la base de datos MySQL - Desarrollo en producción
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'thotexdb',
+    #     'USER': 'root',
+    #     'PASSWORD': 'Thusenterprise?mysql',
+    #     'HOST': 'localhost',  # or the hostname where your MySQL server is running
+    #     'PORT': '3306',      # or the port on which your MySQL server is listening
+    # }
 }
 
 
@@ -129,7 +162,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'login.Persona'
+AUTH_USER_MODEL = 'login.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
