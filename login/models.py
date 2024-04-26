@@ -16,7 +16,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     
 
-# Crear perfil según sea persona o empresa
+# Crear perfil segï¿½n sea persona o empresa
     
 # def crear_persona(sender, instance, created, **kwargs):
 #     if created:
@@ -32,18 +32,6 @@ class User(AbstractUser):
         
 # post_save.connect(crear_empresa, sender=User)
 
-class Persona(models.Model):
-    
-    Usuario = models.OneToOneField(User, on_delete=models.CASCADE)
-    Per_id = models.AutoField(primary_key=True)
-    Mun_id = models.ForeignKey('Municipio', on_delete=models.CASCADE, null=True)
-    Per_tipoId = models.CharField(max_length=30)
-    Per_identificacion = models.IntegerField()
-    Per_nombre = models.CharField(max_length=40)
-    Per_apellido = models.CharField(max_length=40)
-    Per_telefono = models.IntegerField()
-    
-
 class Departamento(models.Model):
     
     Dep_id = models.AutoField(primary_key=True)
@@ -53,5 +41,21 @@ class Departamento(models.Model):
 class Municipio(models.Model):
     
     Mun_id = models.AutoField(primary_key=True)
-    Dep_id = models.ForeignKey('Departamento', on_delete=models.CASCADE)
-    Mun_nombre = models.CharField(max_length=30)
+    Dep_id = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    Mun_nombre = models.CharField(max_length=30)    
+
+class Perfil_Persona(models.Model):
+    
+    tipoId = [
+        ('CC', 'Cedula de Ciudadania'),
+        ('CE', 'Cedula de Extranjeria'),
+        ('PA', 'Pasaporte'),
+    ]    
+    
+    Usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    Per_id = models.AutoField(primary_key=True)
+    Mun_id = models.ForeignKey(Municipio, verbose_name="Municipio", on_delete=models.CASCADE, null=True)
+    Per_tipoId = models.CharField(max_length = 30, choices = tipoId, verbose_name='Tipo de identificacion')
+    Per_identificacion = models.IntegerField(verbose_name='Identificacion')
+    
+
