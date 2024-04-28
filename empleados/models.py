@@ -32,7 +32,7 @@ class Empleado(models.Model):
     Emp_cargo = models.CharField(max_length = 60, verbose_name='cargo')
     Emp_salario = models.IntegerField(verbose_name="salario")
     Emp_fechaingreso = models.DateField(verbose_name="fecha de ingreso", auto_now_add=True)
-    Per_nombre = models.ForeignKey(Persona, on_delete=models.CASCADE) 
+    Persona = models.OneToOneField(Persona, on_delete=models.CASCADE) 
 
     class meta:
         db_table = "Empleado"

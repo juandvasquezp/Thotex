@@ -9,15 +9,25 @@ import jwt, datetime
 
 User = get_user_model()
 
-class RegisterView(APIView):
+# class RegisterView(APIView):
     
-    def post(self, request):
+#     def post(self, request):
                 
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+#         serializer = UserSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
     
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return JsonResponse({'mensaje': 'Registro fallido'})
+
+
 class LoginView(APIView):
     
     def post(self, request):
