@@ -40,4 +40,4 @@ class Empleado(models.Model):
         verbose_name_plural = "Empleados"
 
     def __str__(self) -> str:
-        return self.per_nombre
+        return self.Persona.Per_nombre
