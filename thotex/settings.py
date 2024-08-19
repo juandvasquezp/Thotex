@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,26 +27,34 @@ SECRET_KEY = 'django-insecure-^u4(mm+lppepkd5#mcrb6)tbk@e&ki%4lm-6@v9$r@%9=-$7&2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'rest_framework',
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
+    'six',
+    'django_six',
     'corsheaders',
     'login',
-    'empleados'
+    'empleados',
+    'productos',
+    'terceros',
+    'transacciones',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,10 +64,13 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware'
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",  # URL de la aplicaci�n Vue.js
-    "http://127.0.0.1:8080"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8080",  # URL de la aplicaci�n Vue.js
+#     "http://127.0.0.1:8080",
+#     "https://thotex-deploy-alpha-build.vercel.app/"
+# ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_METHODS = (
     "DELETE",
@@ -72,6 +85,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
@@ -81,7 +97,7 @@ ROOT_URLCONF = 'thotex.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,14 +127,14 @@ DATABASES = {
 
     # Conexión a la base de datos MySQL - Desarrollo local
     
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thotexdb',
-        'USER': 'root',
-        'PASSWORD': 'Thusenterprise?mysql',
-        'HOST': 'localhost',  # or the hostname where your MySQL server is running
-        'PORT': '3306',      # or the port on which your MySQL server is listening
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'thotexdb',
+    #     'USER': 'root',
+    #     'PASSWORD': 'Thusenterprise?mysql',
+    #     'HOST': 'localhost',  # or the hostname where your MySQL server is running
+    #     'PORT': '3306',      # or the port on which your MySQL server is listening
+    # }
 
     # Conexión a la base de datos MySQL - Prueba de modelos desde cero
     
@@ -132,14 +148,14 @@ DATABASES = {
     # }
     
     # Conexión a la base de datos MySQL - Producción AWS
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'thotexv1',
-    #     'USER': 'admin',
-    #     'PASSWORD': 'thotex2024',
-    #     'HOST': 'thotexdb.cpy8w6soo6le.us-east-2.rds.amazonaws.com',  # or the hostname where your MySQL server is running
-    #     'PORT': '3306',      # or the port on which your MySQL server is listening
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'thotexv1',
+        'USER': 'admin',
+        'PASSWORD': 'thotex2024',
+        'HOST': 'thotexdb.cnqs88io4228.us-east-2.rds.amazonaws.com',  # or the hostname where your MySQL server is running
+        'PORT': '3306',      # or the port on which your MySQL server is listening
+    }
 }
 
 
@@ -161,6 +177,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+}
+
+EMAIL_USE_TLS = True  
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_HOST_USER = 'thotexweb@gmail.com'  
+EMAIL_HOST_PASSWORD = 'sdst aboe evsw rwwl'  
+EMAIL_PORT = 587
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -179,6 +205,22 @@ AUTH_USER_MODEL = 'login.User'
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_FILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_TMP = os.path.join(BASE_DIR, 'static')
+
+os.makedirs(STATIC_TMP, exist_ok=True)
+os.makedirs(STATIC_ROOT, exist_ok=True)
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
