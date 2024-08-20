@@ -61,8 +61,8 @@ class LoginView(APIView):
             }
             token = jwt.encode(payload, 'secret', algorithm='HS256')
 
-            response = JsonResponse({'jwt': token})
-            response.set_cookie(key='jwt', value=token, httponly=True)
+            token_str = token.decode('utf-8')
+            response = JsonResponse({'jwt': token_str})
             return response
         else:
             return JsonResponse({'mensaje': 'Inicio de sesion fallido'})

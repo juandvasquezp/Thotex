@@ -98,4 +98,4 @@ class ProductoDetalle(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
 
-        return JsonResponse({"mensaje": "Producto eliminado exitosamente"}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({"mensaje": "Producto eliminado exitosamente"}, safe=False)
