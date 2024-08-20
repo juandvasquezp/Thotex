@@ -16,15 +16,6 @@ from .token import account_activation_token, account_activation_token_verifier
 from django.core.mail import EmailMessage
 
 User = get_user_model()
-
-# class RegisterView(APIView):
-    
-#     def post(self, request):
-                
-#         serializer = UserSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data)
     
 class RegisterView(APIView):
     def post(self, request):

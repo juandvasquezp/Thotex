@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='factura',
-            name='Cl_codigo',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='terceros.cliente', verbose_name='Cliente'),
-        ),
+        # migrations.AlterField(
+        #     model_name='factura',
+        #     name='Cl_codigo',
+        #     field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='terceros.cliente', verbose_name='Cliente'),
+        # ),
         migrations.CreateModel(
             name='Compra',
             fields=[
