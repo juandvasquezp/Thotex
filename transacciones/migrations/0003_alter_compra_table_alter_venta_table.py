@@ -10,12 +10,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelTable(
-            name='compra',
-            table='Compra',
-        ),
-        migrations.AlterModelTable(
-            name='venta',
-            table='Venta',
-        ),
+        # migrations.AlterModelTable(
+        #     name='compra',
+        #     table='Compra',
+        # ),
+        # migrations.AlterModelTable(
+        #     name='venta',
+        #     table='Venta',
+        # ),
     ]
