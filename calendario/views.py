@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from models import Evento
+from .models import Evento
 from django.shortcuts import render
 from rest_framework import generics
 from .Serializer import EventoSerializer
